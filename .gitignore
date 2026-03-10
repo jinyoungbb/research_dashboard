@@ -1,0 +1,33 @@
+# 환경변수 (API 키 — 절대 커밋 금지)
+.env
+
+# 데이터베이스 (크기 크고 바이너리)
+data/
+*.db
+
+# 생성물
+reports/
+logs/
+
+# Python 캐시
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# 가상환경
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.user
+
+# OS
+.DS_Store
+Thumbs.db
+nul
