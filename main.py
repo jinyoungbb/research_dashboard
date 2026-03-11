@@ -53,10 +53,10 @@ def run_report(trend_results: dict, days: int = 7) -> str:
     return str(path)
 
 
-def run_translate(force: bool = False) -> int:
+def run_translate(force: bool = False, priority_keyword: str | None = None) -> int:
     from analyzer.translate import translate_all
     logger.info("=== 초록 한국어 번역 시작 ===")
-    done = translate_all(force=force)
+    done = translate_all(force=force, priority_keyword=priority_keyword)
     logger.info(f"=== 번역 완료: {done}편 ===")
     return done
 
@@ -85,7 +85,8 @@ def main():
     parser.add_argument("--stats",     action="store_true", help="DB 통계 출력")
     parser.add_argument("--days",      type=int, default=7, help="수집 기간 (일, 기본 7)")
     parser.add_argument("--from-date", type=str, default=None, dest="from_date", help="수집 시작일 YYYY-MM-DD (--days보다 우선)")
-    parser.add_argument("--force",     action="store_true", help="번역 강제 재실행")
+    parser.add_argument("--force",            action="store_true", help="번역 강제 재실행")
+    parser.add_argument("--priority-keyword", type=str, default=None, dest="priority_keyword", help="번역 우선순위 키워드 (해당 키워드 포함 논문 먼저)")
     args = parser.parse_args()
 
     # 단독 실행 옵션
@@ -94,7 +95,7 @@ def main():
         return
 
     if args.translate and not args.collect and not args.analyze:
-        run_translate(force=args.force)
+        run_translate(force=args.force, priority_keyword=args.priority_keyword)
         return
 
     if args.collect and not args.analyze and not args.report:

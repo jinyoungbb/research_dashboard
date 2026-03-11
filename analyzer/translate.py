@@ -87,12 +87,13 @@ def _translate_title_only(title: str) -> str:
     return _call(TITLE_ONLY_PROMPT.format(title=title))
 
 
-def translate_all(force: bool = False) -> int:
+def translate_all(force: bool = False, priority_keyword: str | None = None) -> int:
     """
     미번역 논문 전체 번역 (제목 + 초록).
 
     Args:
-        force: True면 이미 번역된 논문도 재번역
+        force:            True면 이미 번역된 논문도 재번역
+        priority_keyword: 이 키워드가 포함된 논문을 우선 번역 (title/abstract/keywords 검색)
 
     Returns:
         번역 완료 건수
@@ -102,6 +103,17 @@ def translate_all(force: bool = False) -> int:
         p for p in papers
         if force or not p.get("title_ko")
     ]
+
+    if priority_keyword:
+        kw = priority_keyword.lower()
+        def _has_kw(p):
+            kws = p.get("keywords") or ""
+            if isinstance(kws, list):
+                kws = " ".join(str(k) for k in kws)
+            return (kw in (p.get("title") or "").lower()
+                    or kw in (p.get("abstract") or "").lower()
+                    or kw in kws.lower())
+        targets = sorted(targets, key=lambda p: (0 if _has_kw(p) else 1))
 
     total = len(targets)
     if total == 0:
